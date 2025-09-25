@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<title>Matrix Houses</title>
+		<style>
+			html,
+			body {
+				margin: 0;
+				height: 100%;
+				background: black;
+				overflow: hidden;
+				font-family: monospace;
+			}
+			canvas {
+				position: absolute;
+				top: 0;
+				left: 0;
+				width: 100%;
+				height: 100%;
+				z-index: 0;
+			}
+			#houseMessage {
+				position: absolute;
+				top: 50%;
+				left: 50%;
+				transform: translate(-50%, -50%);
+				font-size: 2.5rem;
+				font-weight: bold;
+				text-align: center;
+				opacity: 0;
+				transition: opacity 1s ease, transform 1s ease;
+				z-index: 1;
+			}
+			#houseMessage.show {
+				opacity: 1;
+				transform: translate(-50%, -50%) scale(1.1);
+			}
+
+			/* House colors */
+			.syed {
+				color: #2196f3;
+				text-shadow: 0 0 10px #2196f3;
+			}
+			.iqbal {
+				color: #4caf50;
+				text-shadow: 0 0 10px #4caf50;
+			}
+			.jinnah {
+				color: #ffeb3b;
+				text-shadow: 0 0 15px #ffeb3b, 0 0 25px #ff0;
+			}
+		</style>
+	</head>
+	<body>
+		<canvas id="matrix"></canvas>
+		<div id="houseMessage"></div>
+
+		<script>
+			const canvas = document.getElementById("matrix");
+			const ctx = canvas.getContext("2d");
+			const houseMessage = document.getElementById("houseMessage");
+
+			function startMatrix() {
+				function resize() {
+					canvas.width = innerWidth;
+					canvas.height = innerHeight;
+				}
+				addEventListener("resize", resize);
+				resize();
+
+				const symbols =
+					"アカサタナハマヤラワ0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyzΩЖΨѪѬ₪¤¥";
+				const fontSize = 16;
+				let columns = Math.floor(canvas.width / fontSize);
+				let drops = new Array(columns).fill(0);
+
+				function frame() {
+					ctx.fillStyle = "rgba(0,0,0,0.07)";
+					ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+					ctx.fillStyle = "#0F0";
+					ctx.font = fontSize + "px monospace";
+
+					for (let i = 0; i < drops.length; i++) {
+						const char = symbols.charAt(
+							Math.floor(Math.random() * symbols.length)
+						);
+						ctx.fillText(char, i * fontSize, drops[i] * fontSize);
+
+						if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+							drops[i] = 0;
+						}
+						drops[i]++;
+					}
+					requestAnimationFrame(frame);
+				}
+				frame();
+			}
+
+			function houseCelebration() {
+				const messages = [
+					{ text: "Syed House—you brought great energy today!", class: "syed" },
+					{
+						text: "Iqbal House—always inspiring with your spirit!",
+						class: "iqbal",
+					},
+					{
+						text: "Between us…something about Jinnah just shines a little brighter.",
+						class: "jinnah",
+					},
+				];
+
+				let index = 0;
+				function showNext() {
+					houseMessage.className = "";
+					houseMessage.classList.remove("show");
+
+					setTimeout(() => {
+						houseMessage.textContent = messages[index].text;
+						houseMessage.classList.add(messages[index].class);
+						houseMessage.classList.add("show");
+
+						index++;
+						if (index < messages.length) {
+							setTimeout(showNext, 3000);
+						}
+					}, 800);
+				}
+				showNext();
+			}
+
+			// Start everything
+			startMatrix();
+			setTimeout(houseCelebration, 2000); // give matrix 2s head start
+		</script>
+	</body>
+</html>
