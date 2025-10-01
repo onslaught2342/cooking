@@ -50,17 +50,25 @@
 				color: #ffeb3b;
 				text-shadow: 0 0 15px #ffeb3b, 0 0 25px #ff0;
 			}
+			.nafay {
+				color: #ffffff;
+				text-shadow: 0 0 10px #1ed8e9;
+			}
 		</style>
 	</head>
 	<body>
 		<canvas id="matrix"></canvas>
 		<div id="houseMessage"></div>
 
+		<!-- Confetti Library -->
+		<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
+
 		<script>
 			const canvas = document.getElementById("matrix");
 			const ctx = canvas.getContext("2d");
 			const houseMessage = document.getElementById("houseMessage");
 
+			// Matrix effect
 			function startMatrix() {
 				function resize() {
 					canvas.width = innerWidth;
@@ -98,35 +106,106 @@
 				frame();
 			}
 
+			// House celebration with sounds and fireworks
 			function houseCelebration() {
 				const messages = [
-					{ text: "Syed House—you brought great energy today!", class: "syed" },
+					{
+						text: "Syed House—you brought great energy today!",
+						class: "syed",
+						sound: ["assets/fireworks.mp3"],
+						confetti: false,
+						fireworks: false,
+					},
 					{
 						text: "Iqbal House—always inspiring with your spirit!",
 						class: "iqbal",
+						sound: ["assets/clapping.mp3"],
+						confetti: false,
+						fireworks: false,
 					},
 					{
 						text: "Between us…something about Jinnah just shines a little brighter.",
 						class: "jinnah",
+						sound: ["assets/fireworks.mp3", "assets/clapping.mp3"],
+						confetti: true,
+						fireworks: true,
+					},
+					{
+						text: "Next time, bring someone who’s actually worth my time.",
+						class: "nafay",
+						sound: [],
+						confetti: false,
+						fireworks: false,
 					},
 				];
 
 				let index = 0;
-				function showNext() {
+
+				function playSounds(sources) {
+					return new Promise((resolve) => {
+						let remaining = sources.length;
+						sources.forEach((src) => {
+							const audio = new Audio(src);
+							audio.play();
+							audio.onended = () => {
+								remaining--;
+								if (remaining === 0) resolve();
+							};
+						});
+					});
+				}
+
+				function launchFireworks() {
+					const duration = 4000;
+					const end = Date.now() + duration;
+					(function frame() {
+						confetti({
+							particleCount: 5,
+							angle: Math.random() * 360,
+							spread: 100,
+							origin: { x: Math.random(), y: Math.random() * 0.5 },
+							colors: ["#ff0", "#f00", "#0f0", "#00f"],
+						});
+						if (Date.now() < end) {
+							requestAnimationFrame(frame);
+						}
+					})();
+				}
+
+				async function showNext() {
+					if (index >= messages.length) return;
+
+					const msg = messages[index];
+
 					houseMessage.className = "";
 					houseMessage.classList.remove("show");
 
-					setTimeout(() => {
-						houseMessage.textContent = messages[index].text;
-						houseMessage.classList.add(messages[index].class);
+					setTimeout(async () => {
+						houseMessage.textContent = msg.text;
+						houseMessage.classList.add(msg.class);
 						houseMessage.classList.add("show");
 
-						index++;
-						if (index < messages.length) {
-							setTimeout(showNext, 3000);
+						if (msg.confetti) {
+							confetti({
+								particleCount: 150,
+								spread: 70,
+								origin: { y: 0.6 },
+								colors: ["#ff0", "#f00", "#0f0", "#00f"],
+							});
 						}
+
+						if (msg.fireworks) {
+							launchFireworks();
+						}
+
+						// Wait for all sound(s) to finish before moving to next message
+						await playSounds(msg.sound);
+
+						index++;
+						showNext();
 					}, 800);
 				}
+
 				showNext();
 			}
 
