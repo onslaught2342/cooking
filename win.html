@@ -54,11 +54,43 @@
 				color: #ffffff;
 				text-shadow: 0 0 10px #1ed8e9;
 			}
+
+			/* Glowing neon button styling */
+			#startBtn {
+				position: absolute;
+				top: 70%;
+				left: 50%;
+				transform: translate(-50%, -50%);
+				font-size: 1.6rem;
+				font-weight: bold;
+				letter-spacing: 2px;
+				padding: 15px 40px;
+				color: #00ff99;
+				background: transparent;
+				border: 2px solid #00ff99;
+				border-radius: 12px;
+				cursor: pointer;
+				z-index: 2;
+				text-transform: uppercase;
+				box-shadow: 0 0 15px #00ff99, 0 0 30px #00ff99 inset;
+				transition: all 0.3s ease;
+			}
+			#startBtn:hover {
+				color: black;
+				background: #00ff99;
+				box-shadow: 0 0 30px #00ff99, 0 0 60px #00ff99 inset;
+				transform: translate(-50%, -50%) scale(1.1);
+			}
+			#startBtn:active {
+				transform: translate(-50%, -50%) scale(0.95);
+				box-shadow: 0 0 20px #00ff99 inset;
+			}
 		</style>
 	</head>
 	<body>
 		<canvas id="matrix"></canvas>
 		<div id="houseMessage"></div>
+		<button id="startBtn">Enter the Matrix</button>
 
 		<!-- Confetti Library -->
 		<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
@@ -67,6 +99,7 @@
 			const canvas = document.getElementById("matrix");
 			const ctx = canvas.getContext("2d");
 			const houseMessage = document.getElementById("houseMessage");
+			const startBtn = document.getElementById("startBtn");
 
 			// Matrix effect
 			function startMatrix() {
@@ -106,18 +139,18 @@
 				frame();
 			}
 
-			// House celebration with sounds and fireworks
+			// Celebration logic
 			function houseCelebration() {
 				const messages = [
 					{
-						text: "Syed House you brought great energy today!",
+						text: "Syed House—you brought great energy today!",
 						class: "syed",
 						sound: ["https://cdn.onslaught2342.qzz.io/assets/fireworks.mp3"],
 						confetti: false,
 						fireworks: false,
 					},
 					{
-						text: "Iqbal House always inspiring with your spirit!",
+						text: "Iqbal House—always inspiring with your spirit!",
 						class: "iqbal",
 						sound: ["https://cdn.onslaught2342.qzz.io/assets/clapping.mp3"],
 						confetti: false,
@@ -146,10 +179,11 @@
 
 				function playSounds(sources) {
 					return new Promise((resolve) => {
+						if (!sources.length) return resolve();
 						let remaining = sources.length;
 						sources.forEach((src) => {
 							const audio = new Audio(src);
-							audio.play();
+							audio.play().catch(() => resolve());
 							audio.onended = () => {
 								remaining--;
 								if (remaining === 0) resolve();
@@ -179,7 +213,6 @@
 					if (index >= messages.length) return;
 
 					const msg = messages[index];
-
 					houseMessage.className = "";
 					houseMessage.classList.remove("show");
 
@@ -196,25 +229,25 @@
 								colors: ["#ff0", "#f00", "#0f0", "#00f"],
 							});
 						}
+						if (msg.fireworks) launchFireworks();
 
-						if (msg.fireworks) {
-							launchFireworks();
-						}
-
-						// Wait for all sound(s) to finish before moving to next message
 						await playSounds(msg.sound);
 
 						index++;
 						showNext();
 					}, 800);
 				}
-
 				showNext();
 			}
 
-			// Start everything
+			// Init matrix immediately
 			startMatrix();
-			setTimeout(houseCelebration, 2000); // give matrix 2s head start
+
+			// Wait for user interaction to start celebration (fix autoplay restriction)
+			startBtn.addEventListener("click", () => {
+				startBtn.style.display = "none";
+				setTimeout(houseCelebration, 1000);
+			});
 		</script>
 	</body>
 </html>
