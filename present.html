@@ -2,7 +2,13 @@
 <html>
 	<head>
 		<meta charset="utf-8" />
-		<title>Matrix Video Viewer</title>
+		<title>Sigma Schedule</title>
+		<link
+			rel="icon"
+			type="image/svg+xml"
+			href="https://onslaught2342.github.io/favicon.ico"
+		/>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 		<style>
 			html,
 			body {
@@ -116,6 +122,14 @@
 					loadVideo(current);
 				}
 				if (e.key === "ArrowLeft") {
+					current = (current - 1 + videos.length) % videos.length;
+					loadVideo(current);
+				}
+				if (e.key === "ArrowUp") {
+					current = (current + 1) % videos.length;
+					loadVideo(current);
+				}
+				if (e.key === "ArrowDown") {
 					current = (current - 1 + videos.length) % videos.length;
 					loadVideo(current);
 				}
