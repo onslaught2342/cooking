@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html>
 	<head>
 		<meta charset="utf-8" />
@@ -93,7 +93,7 @@
 		<pre id="asciiOverlay"></pre>
 		<video id="videoOverlay" muted playsinline>
 			<source
-				src="https://cdn.onslaught2342.qzz.io/assets/Intro.webm"
+				src="https://cdn.onslaught2342.qzz.io/assets/videos/wallpapers/aura.mp4"
 				type="video/webm"
 			/>
 		</video>
@@ -180,15 +180,15 @@
 				await typeLine("[    0.004321] Initializing hardware........ [OK]", 23);
 				await typeLine(
 					"[    0.010932] Mounting /root................. [OK]",
-					24
+					24,
 				);
 				await typeLine(
 					"[    0.019876] Loading kernel................. [OK]",
-					22
+					22,
 				);
 				await typeLine(
 					"[    0.028345] Launching userland............. [OK]",
-					22
+					22,
 				);
 
 				await typeWithCursor("AbdulOS Login: Abdul Nafay", 120);
@@ -244,7 +244,7 @@
 							() => {
 								videoOverlay.play();
 							},
-							{ once: true }
+							{ once: true },
 						);
 						videoOverlay.addEventListener("ended", () => {
 							videoOverlay.pause();
@@ -282,7 +282,7 @@
 					ctx.font = fontSize + "px monospace";
 					for (let i = 0; i < drops.length; i++) {
 						const char = symbols.charAt(
-							Math.floor(Math.random() * symbols.length)
+							Math.floor(Math.random() * symbols.length),
 						);
 						ctx.fillText(char, i * fontSize, drops[i] * fontSize);
 						if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
